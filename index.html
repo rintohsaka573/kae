@@ -1,176 +1,283 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>MaaS Portal</title>
 
-<title>MaaS Portal</title>
+  <style>
+    :root{
+      --bg:#0b0b0b;
+      --panel:#0f0f0f;
+      --card:#141414;
+      --border:#232323;
+      --text:#ffffff;
+      --muted:#a8a8a8;
+      --barH: 62px;
+      --radius: 16px;
+    }
 
-<meta name="theme-color" content="#111111">
+    * { box-sizing: border-box; }
 
-<style>
-body{
-  margin:0;
-  background:#0b0b0b;
-  color:white;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-}
+    html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
 
-header{
-  padding:18px;
-  border-bottom:1px solid #222;
-}
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--barH);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
 
-h1{
-  margin:0;
-  font-size:20px;
-}
+    .brand{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+      min-width: 120px;
+    }
+    .brand b{ font-size: 14px; }
+    .brand span{ font-size: 12px; color: var(--muted); }
 
-.sub{
-  margin-top:6px;
-  color:#aaa;
-  font-size:13px;
-}
+    .controls{
+      flex: 1;
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      min-width: 0;
+    }
 
-.search{
-  display:flex;
-  gap:8px;
-  padding:16px;
-}
+    .btn{
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #1b1b1b;
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .btn:active{ transform: scale(0.99); }
 
-input{
-  flex:1;
-  height:42px;
-  border:none;
-  border-radius:12px;
-  background:#151515;
-  color:white;
-  padding:0 14px;
-  font-size:14px;
-}
+    .urlbox{
+      flex: 1;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #111;
+      color: var(--text);
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+      min-width: 0;
+    }
 
-button{
-  border:none;
-  border-radius:12px;
-  background:#242424;
-  color:white;
-  padding:0 16px;
-  font-size:14px;
-}
+    .wrap{
+      height: calc(100% - var(--barH));
+      display:flex;
+      flex-direction:column;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
-  padding:0 16px 16px;
-}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
 
-.card{
-  display:block;
-  background:#141414;
-  border:1px solid #222;
-  border-radius:16px;
-  padding:16px;
-  color:white;
-  text-decoration:none;
-}
+    .cardBtn{
+      text-align: left;
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding: 14px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .cardBtn:active{ transform: scale(0.99); }
 
-.card:hover{
-  border-color:#444;
-}
+    .title{ margin: 0 0 6px 0; font-size: 14px; font-weight: 600; }
+    .desc{ margin: 0; font-size: 12px; color: var(--muted); line-height: 1.35; }
 
-.title{
-  font-size:15px;
-  margin-bottom:6px;
-}
+    .viewer{
+      position: relative;
+      flex: 1;
+      min-height: 200px;
+      background: #000;
+    }
 
-.desc{
-  font-size:12px;
-  color:#aaa;
-  line-height:1.35;
-}
-</style>
+    iframe{
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #000;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:none;
+      padding: 16px;
+      background: var(--bg);
+    }
+    .overlay h2{ margin:0 0 8px 0; font-size: 16px; }
+    .overlay p{ margin:0 0 10px 0; font-size: 13px; color: var(--muted); line-height: 1.35; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: #d0d0d0; word-break: break-all; }
+
+    @media (min-width: 900px){
+      .grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .brand{ min-width: 160px; }
+    }
+  </style>
 </head>
 
 <body>
+  <header>
+    <div class="brand">
+      <b>MaaS Portal</b>
+      <span>Opens inside page</span>
+    </div>
 
-<header>
-  <h1>MaaS Portal</h1>
+    <div class="controls">
+      <button class="btn" id="backBtn" type="button" title="Back">◀</button>
+      <button class="btn" id="reloadBtn" type="button" title="Reload">↻</button>
+      <input class="urlbox" id="urlBox" placeholder="Type URL (example.com) or search..." />
+      <button class="btn" id="goBtn" type="button">Go</button>
+    </div>
+  </header>
 
-  <div class="sub">
-    Lightweight launcher for allowed services
+  <div class="wrap">
+    <!-- Clickable buttons -->
+    <div class="grid">
+      <button class="cardBtn" type="button" data-url="https://animotvslash.org/">
+        <p class="title">AnimoTVSlash</p>
+        <p class="desc">Loads in viewer (may be blocked by policy)</p>
+      </button>
+
+      <button class="cardBtn" type="button" data-url="https://github.com/">
+        <p class="title">GitHub</p>
+        <p class="desc">Usually works better than iframing Google</p>
+      </button>
+
+      <button class="cardBtn" type="button" data-url="https://drive.google.com/">
+        <p class="title">Google Drive</p>
+        <p class="desc">Often blocks iframe embedding</p>
+      </button>
+
+      <button class="cardBtn" type="button" data-url="https://docs.google.com/">
+        <p class="title">Google Docs</p>
+        <p class="desc">Often blocks iframe embedding</p>
+      </button>
+    </div>
+
+    <!-- Viewer -->
+    <div class="viewer">
+      <iframe
+        id="frame"
+        referrerpolicy="no-referrer"
+        sandbox="allow-forms allow-modals allow-same-origin allow-scripts"
+        src="about:blank"
+      ></iframe>
+
+      <div class="overlay" id="blockedOverlay">
+        <h2>Can’t open inside this page</h2>
+        <p>
+          The site may block embedding inside an iframe (X-Frame-Options / CSP frame-ancestors)
+          or MaaS360 may block the domain.
+        </p>
+        <p class="mono" id="blockedUrl"></p>
+      </div>
+    </div>
   </div>
-</header>
 
-<div class="search">
-  <input id="q" placeholder="Search or type URL">
-  <button id="go">Go</button>
-</div>
+  <script>
+    const frame = document.getElementById("frame");
+    const urlBox = document.getElementById("urlBox");
+    const blockedOverlay = document.getElementById("blockedOverlay");
+    const blockedUrl = document.getElementById("blockedUrl");
 
-<div class="grid">
+    const historyStack = [];
 
-  <div class="card" data-url="https://animotvslash.org/">
-    <p class="title">AnimoTVSlash</p>
-    <p class="desc">Loads inside this page (may be blocked by policy)</p>
-  </div>
+    function hideBlocked(){
+      blockedOverlay.style.display = "none";
+    }
 
-  <a class="card" href="https://drive.google.com/" target="_blank">
-    <div class="title">Google Drive</div>
-    <div class="desc">
-      Files, videos and media
-    </div>
-  </a>
+    function showBlocked(url){
+      blockedUrl.textContent = url;
+      blockedOverlay.style.display = "block";
+    }
 
-  <a class="card" href="https://docs.google.com/" target="_blank">
-    <div class="title">Google Docs</div>
-    <div class="desc">
-      Docs, Sheets and Slides
-    </div>
-  </a>
+    function normalize(input){
+      let s = (input || "").trim();
+      if (!s) return null;
 
-  <a class="card" href="https://github.com/" target="_blank">
-    <div class="title">GitHub</div>
-    <div class="desc">
-      Repositories and Pages
-    </div>
-  </a>
+      // If it looks like a URL: open it. Otherwise: search using Google.
+      const looksLikeUrl = s.includes(".") && !s.includes(" ");
+      if (looksLikeUrl){
+        if (!/^https?:\/\//i.test(s)) s = "https://" + s;
+        return s;
+      }
+      return "https://www.google.com/search?q=" + encodeURIComponent(s);
+    }
 
-  <a class="card" href="https://www.google.com/" target="_blank">
-    <div class="title">Google</div>
-    <div class="desc">
-      Search engine
-    </div>
-  </a>
+    function load(url){
+      const u = normalize(url);
+      if (!u) return;
 
-</div>
+      hideBlocked();
 
-<script>
-const q = document.getElementById("q");
-const go = document.getElementById("go");
+      if (historyStack.length === 0 || historyStack[historyStack.length - 1] !== u) {
+        historyStack.push(u);
+      }
 
-function normalize(v){
-  v = (v || "").trim();
+      urlBox.value = u;
+      frame.src = u;
 
-  if(!v) return null;
+      // Best-effort: if iframe embedding fails, show overlay.
+      setTimeout(() => {
+        try {
+          const w = frame.contentWindow;
+          if (!w) throw new Error("no contentWindow");
+        } catch (e) {
+          showBlocked(u);
+        }
+      }, 1200);
+    }
 
-  if(v.includes(".") && !v.includes(" ")){
-    return v.startsWith("http")
-      ? v
-      : "https://" + v;
-  }
+    // Card clicks
+    document.querySelectorAll(".cardBtn").forEach(btn => {
+      btn.addEventListener("click", () => load(btn.dataset.url));
+    });
 
-  return "https://www.google.com/search?q=" + encodeURIComponent(v);
-}
+    // Top controls
+    document.getElementById("goBtn").addEventListener("click", () => load(urlBox.value));
+    urlBox.addEventListener("keydown", (e) => { if (e.key === "Enter") load(urlBox.value); });
 
-go.onclick = () => {
-  const url = normalize(q.value);
-  if(url) window.open(url, "_blank");
-};
+    document.getElementById("reloadBtn").addEventListener("click", () => {
+      hideBlocked();
+      frame.src = frame.src;
+    });
 
-q.addEventListener("keydown", e => {
-  if(e.key === "Enter") go.click();
-});
-</script>
+    document.getElementById("backBtn").addEventListener("click", () => {
+      if (historyStack.length > 1) {
+        historyStack.pop();
+        load(historyStack[historyStack.length - 1]);
+      }
+    });
 
+    // Default page
+    load("https://animotvslash.org/");
+  </script>
 </body>
 </html>
